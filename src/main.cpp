@@ -25,9 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
  */
 
+#include <stdint.h>
 #include <string>
 #include <iostream>
 #include <boost/algorithm/hex.hpp>
+#include "./byte_array.h"
 #include "./LOG.h"
 #include "./yubi.h"
 #include "./prog_opts.h"
@@ -48,15 +50,29 @@ int main(int argc, char *argv[])
             LOG << "serial number: " << key->serialNumber() << endl;
             LOG << "challenge: " << opts.challenge << endl;
 
-            std::string unhexed;
-            try
+            byte_array unhexed;
+
+            if (opts.hexInput)
             {
-                unhexed = (opts.hexInput) ? boost::algorithm::unhex(opts.challenge) : opts.challenge;
+                try
+                {
+                    boost::algorithm::unhex(opts.challenge, std::back_inserter(unhexed));
+                }
+                catch (const std::exception &e)
+                {
+                    std::cerr << "Unable to parse challenge (non-hex input)" << endl;
+                    return 1;
+                }
             }
-            catch (const std::exception &e)
+            else
             {
-                std::cerr << "Unable to parse challenge (non-hex input)" << endl;
-                return 1;
+                unhexed = reinterpret_cast<const unsigned char *>(opts.challenge.c_str());
+            }
+
+            if (unhexed.length() > 64)
+            {
+                LOG << "warning: truncated challenge to 64 characters" << endl;
+                unhexed.resize(64);
             }
 
             int len;
@@ -65,7 +81,7 @@ int main(int argc, char *argv[])
             len = unhexed.length();
             chal = reinterpret_cast<const unsigned char *>(unhexed.c_str());
 
-            LOG << "length: " << unhexed.length() << endl;
+            LOG << "length: " << len << endl;
 
             std::string resp;
 
