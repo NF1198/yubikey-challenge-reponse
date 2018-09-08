@@ -29,6 +29,7 @@
 #include <exception>
 #include <iostream>
 #include <ostream>
+#include <algorithm>
 #include <string>
 #include <sstream>
 #include <boost/algorithm/hex.hpp>
@@ -38,6 +39,7 @@
 
 #include "./LOG.h"
 #include "./yubi.h"
+#include "./byte_array.h"
 
 using namespace std;
 
@@ -66,8 +68,6 @@ LibraryManager::~LibraryManager()
     LOG << "releasing yubikey library..." << endl;
     yk_release();
 }
-
-
 
 YubiKey::YubiKey()
 {
@@ -160,12 +160,15 @@ std::string YubiKey::challengeResponse(const unsigned char *challenge, int lengt
     memset(resp, 0, sizeof(resp));
 
     if (!yk_challenge_response(this->key_, yk_cmd, 1, length,
-                               chal, sizeof(resp), (unsigned char*)resp))
+                               chal, sizeof(resp), (unsigned char *)resp))
     {
         throw(yk_errstr);
     }
 
-    std::string responseString(resp, 20);
-    return boost::algorithm::hex(responseString);
-}
+    memset(resp + 20, 0, 64 - 20);
 
+    std::string result_hex;
+    boost::algorithm::hex(resp, std::back_inserter(result_hex));
+    std::transform(result_hex.begin(), result_hex.end(), result_hex.begin(), ::tolower);
+    return result_hex;
+}
