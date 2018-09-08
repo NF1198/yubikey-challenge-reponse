@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
             catch (const std::exception &e)
             {
                 std::cerr << "Unable to parse challenge (non-hex input)" << endl;
-                return -1;
+                return 1;
             }
 
             int len;
