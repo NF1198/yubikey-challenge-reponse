@@ -169,6 +169,7 @@ std::string YubiKey::challengeResponse(const unsigned char *challenge, int lengt
 
     std::string result_hex;
     boost::algorithm::hex(resp, std::back_inserter(result_hex));
+    result_hex.resize(40);
     std::transform(result_hex.begin(), result_hex.end(), result_hex.begin(), ::tolower);
     return result_hex;
 }
