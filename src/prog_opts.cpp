@@ -28,6 +28,7 @@
 #include <memory>
 #include <exception>
 #include <iostream>
+#include <iomanip>
 #include <ostream>
 #include <string>
 #include <sstream>
@@ -93,7 +94,11 @@ void ProgramOptions::parse(int argc, char *argv[])
         throw(std::invalid_argument("Invalid slot"));
     }
 
-    if (challenge.length() > 64)
+    if (challenge == "-") {
+        cin >> setw(128) >> challenge;
+    }
+
+    if (challenge.length() > 128)
     {
         throw(std::invalid_argument("Challenge should be max 64 characters"));
     }
