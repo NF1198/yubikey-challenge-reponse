@@ -156,16 +156,16 @@ std::string YubiKey::challengeResponse(const unsigned char *challenge, int lengt
     }
 
     const unsigned char *chal = challenge;
-    unsigned char resp[64];
+    char resp[64];
     memset(resp, 0, sizeof(resp));
 
     if (!yk_challenge_response(this->key_, yk_cmd, 1, length,
-                               chal, sizeof(resp), resp))
+                               chal, sizeof(resp), (unsigned char*)resp))
     {
         throw(yk_errstr);
     }
 
-    std::string responseString(reinterpret_cast<char *>(resp), 0, 20);
+    std::string responseString(resp, 20);
     return boost::algorithm::hex(responseString);
 }
 
