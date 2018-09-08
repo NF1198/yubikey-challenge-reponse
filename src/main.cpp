@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
             const unsigned char *chal;
 
             len = unhexed.length();
-            chal = reinterpret_cast<const unsigned char *>(unhexed.c_str());
+            chal = unhexed.data();
 
             LOG << "length: " << len << endl;
 
