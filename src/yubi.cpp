@@ -165,7 +165,11 @@ std::string YubiKey::challengeResponse(const unsigned char *challenge, int lengt
         throw(yk_errstr);
     }
 
+<<<<<<< HEAD
     memset(resp + 20, 0, sizeof(resp) - 20);
+=======
+    memset(resp + 20, 0, 64 - 20);
+>>>>>>> f3359a8251b3feae97197f72097c6648c359318b
 
     std::string result_hex;
     boost::algorithm::hex(resp, std::back_inserter(result_hex));
