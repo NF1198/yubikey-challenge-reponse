@@ -30,9 +30,9 @@
 #include <iostream>
 #include <ostream>
 #include <algorithm>
+#include <cstring>
 #include <string>
 #include <sstream>
-#include <boost/algorithm/hex.hpp>
 #include <ykpers-1/ykcore.h>
 #include <ykpers-1/ykstatus.h>
 #include <ykpers-1/ykdef.h>
@@ -165,11 +165,16 @@ std::string YubiKey::challengeResponse(const unsigned char *challenge, int lengt
         throw(yk_errstr);
     }
 
-    memset(resp + 20, 0, sizeof(resp) - 20);
+    stringstream hex_stream;
+    hex_stream << hex;
+    for (int idx = 0; idx < 20; idx++)
+    {
+        hex_stream.width(2);
+        hex_stream.fill('0');
+        hex_stream << (unsigned int)((uint8_t)resp[idx]);
+    }
 
-    std::string result_hex;
-    boost::algorithm::hex(resp, std::back_inserter(result_hex));
-    result_hex.resize(40);
+    std::string result_hex = hex_stream.str();
     std::transform(result_hex.begin(), result_hex.end(), result_hex.begin(), ::tolower);
     return result_hex;
 }
