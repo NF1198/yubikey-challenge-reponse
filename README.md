@@ -17,11 +17,11 @@ Example Usage:
 
 # Dependencies
 
-cmake, gcc7, boost, libyubikey
+cmake, gcc7, boost, libyubikey, libykpers
 
 ## On Ubuntu:
 
-`apt install build-essential cmake libboost1.62-all-dev libyubikey-dev`
+`apt install build-essential cmake libboost1.62-all-dev libyubikey-dev libykpers-1-dev`
 
 # Build Instructions
 
